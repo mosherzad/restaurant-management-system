@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(STAFF)
+  createdAt DateTime @default(now())
+}
+
+model MenuItem {
+  id         Int         @id @default(autoincrement())
+  name       String
+  price      Float
+  image      String
+  categoryId Int
+  available  Boolean     @default(true)
+  category   Category    @relation(fields: [categoryId], references: [id])
+  orderItems OrderItem[]
+}
+
+model Category {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  createdAt DateTime   @default(now())
+  menuItem  MenuItem[]
+}
+
+model Order {
+  id            Int           @id @default(autoincrement())
+  tableNumber   Int
+  status        OrderStatus   @default(PENDING)
+  paymentStatus PaymentStatus @default(UNPAID)
+  note          String
+  total         Float
+  createdAt     DateTime      @default(now())
+  items         OrderItem[]
+}
+
+model OrderItem {
+  id         Int      @id @default(autoincrement())
+  quantity   Int
+  orderId    Int
+  menuItemId Int
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  order      Order    @relation(fields: [orderId], references: [id],  onDelete: Cascade)
+}
+
+enum Role {
+  ADMIN
+  STAFF
+  KITCHEN
+  CASHIER
+}
+
+enum OrderStatus {
+  PENDING
+  READY
+  COOKING
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PAID
+  UNPAID
+}
