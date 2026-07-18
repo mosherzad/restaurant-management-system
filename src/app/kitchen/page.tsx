@@ -20,6 +20,14 @@ type Order = {
 const Kitchen = () => {
   const [orders, setOrders] = useState<Order[]>([]);
 
+  const readyOrders = orders.filter((order) => order.status === "READY").length;
+  const cookingOrders = orders.filter(
+    (order) => order.status === "COOKING",
+  ).length;
+  const pendingOrders = orders.filter(
+    (order) => order.status === "PENDING",
+  ).length;
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -83,26 +91,26 @@ const Kitchen = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className={cardStyle + " bg-orange-500/20"}>
           <div className="flex items-center gap-2 mb-2">
-            <MdPendingActions size={20} />
+            <MdPendingActions size={20} className="text-orange-400" />
             <h3 className="font-semibold">Pending Orders</h3>
           </div>
-          <p className="text-2xl font-bold">12</p>
+          <p className="text-2xl font-bold">{pendingOrders}</p>
         </div>
 
         <div className={cardStyle + " bg-yellow-500/20"}>
           <div className="flex items-center gap-2 mb-2">
-            <FaFire size={18} />
+            <FaFire size={18} className="text-yellow-400" />
             <h3 className="font-semibold">In Progress</h3>
           </div>
-          <p className="text-2xl font-bold">5</p>
+          <p className="text-2xl font-bold">{cookingOrders}</p>
         </div>
 
         <div className={cardStyle + " bg-green-500/20"}>
           <div className="flex items-center gap-2 mb-2">
-            <FaCheckCircle size={18} />
+            <FaCheckCircle size={18} className="text-green-500" />
             <h3 className="font-semibold">Ready</h3>
           </div>
-          <p className="text-2xl font-bold">8</p>
+          <p className="text-2xl font-bold">{readyOrders}</p>
         </div>
       </div>
 
@@ -141,7 +149,7 @@ const Kitchen = () => {
                         | "COMPLETED",
                     )
                   }
-                  className="rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium text-white outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-400/30"
+                  className={`rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm font-medium ${order.status === "READY" ? "text-green-500" : order.status === "PENDING" ? "text-red-400" : order.status === "COOKING" ? "text-yellow-400" : "text-blue-500"} outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-400/30`}
                 >
                   <option
                     className="bg-[#1f2937] text-orange-400"

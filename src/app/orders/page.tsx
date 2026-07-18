@@ -20,7 +20,14 @@ type Order = {
 const Orders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const cardStyle = "p-4 rounded-md border border-white/20 text-white";
+  const totalOrders = orders.length;
+  const pendingOrders = orders.filter(
+    (order) => order.status === "PENDING",
+  ).length;
 
+  const completedOrders = orders.filter(
+    (order) => order.status === "COMPLETED",
+  ).length;
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -50,7 +57,7 @@ const Orders = () => {
             <FaBasketShopping size={20} />
             <h3 className="font-semibold">Total Orders</h3>
           </div>
-          <p className="text-2xl font-bold">120</p>
+          <p className="text-2xl font-bold">{totalOrders}</p>
         </div>
 
         <div className={cardStyle + " bg-orange-500/20"}>
@@ -58,7 +65,7 @@ const Orders = () => {
             <MdPendingActions size={20} />
             <h3 className="font-semibold">Pending</h3>
           </div>
-          <p className="text-2xl font-bold">25</p>
+          <p className="text-2xl font-bold">{pendingOrders}</p>
         </div>
 
         <div className={cardStyle + " bg-green-500/20"}>
@@ -66,7 +73,7 @@ const Orders = () => {
             <FaCheckCircle size={20} />
             <h3 className="font-semibold">Completed</h3>
           </div>
-          <p className="text-2xl font-bold">95</p>
+          <p className="text-2xl font-bold">{completedOrders}</p>
         </div>
       </div>
 
@@ -96,20 +103,14 @@ const Orders = () => {
                     ${order.total}
                   </h6>
                 </div>
-                <span className="text-orange-400">{order.status}</span>
+                <span
+                  className={`font-semibold text-sm ${order.status === "READY" ? "text-green-500" : order.status === "PENDING" ? "text-red-500" : order.status === "COOKING" ? "text-yellow-400" : "text-blue-500"}`}
+                >
+                  {order.status}
+                </span>
               </div>
             );
           })}
-
-          {/* <div className="flex justify-between items-center border-b border-white/10 pb-2">
-            <span>#1233 - Pizza</span>
-            <span className="text-green-400">Completed</span>
-          </div>
-
-          <div className="flex justify-between items-center">
-            <span>#1232 - Shawarma</span>
-            <span className="text-green-400">Completed</span>
-          </div> */}
         </div>
       </div>
     </div>

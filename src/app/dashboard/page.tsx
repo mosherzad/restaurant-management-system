@@ -1,7 +1,42 @@
-import React from "react";
+import AddCategory from "@/components/AddCategory";
+import AddMeal from "@/components/AddMeal";
+import CategoryList from "@/components/CategoryList";
+import DashboardHeader from "@/components/DashboardHeader";
+import { OrderOverview } from "@/components/OrderOverview";
+import RecentMeals from "@/components/RecentMeals";
+import RecentOrders from "@/components/RecentOrders";
+import StatusCard from "@/components/StatusCard";
 
-const Dashboard = () => {
-  return <div>Dashboard</div>;
+const Dashboard = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`);
+
+  if (!res.ok) throw new Error("failed to fetch data");
+
+  const statics = await res.json();
+
+  console.log(statics.categoryies);
+  return (
+    <div>
+      <DashboardHeader />
+      <StatusCard statics={statics} />
+      <div className="flex flex-col lg:flex-row  gap-5 mt-3">
+        <OrderOverview />
+        <RecentOrders />
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-5 mt-5">
+        <div className="bg-[#0F172A] flex w-full lg:w-[40%] rounded-2xl">
+          <AddCategory />
+          <CategoryList />
+        </div>
+
+        <div className="bg-[#0F172A] flex w-full lg:w-[60%] rounded-2xl">
+          <AddMeal categories={statics.categories} />
+          <RecentMeals />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Dashboard;

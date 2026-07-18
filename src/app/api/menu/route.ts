@@ -3,7 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const menuItems = await prisma.menuItem.findMany();
+    const menuItems = await prisma.menuItem.findMany({
+      include: { category: true },
+    });
 
     if (!menuItems)
       return NextResponse.json(
