@@ -60,18 +60,10 @@ function CartInner({ onCloseMobile }: { onCloseMobile?: () => void }) {
               <FaTimes className="text-xl" />
             </button>
           ) : null}
-          <h1 className="truncate text-lg font-bold text-white md:text-xl">
+          <h1 className="truncate text-sm lg:text-lg md:text-md font-bold text-white md:text-xl">
             Current Orders
           </h1>
         </div>
-        <input
-          type="number"
-          required
-          value={tableNumber}
-          onChange={(e) => setTableNumber(Number(e.target.value))}
-          placeholder="Table number"
-          className="rounded-md bg-[#ff6d04]/50 px-3 py-1 text-sm text-white md:px-5 w-32 outline-none"
-        />
       </div>
       <hr className="my-4 text-gray-700 md:my-5" />
       <div className="flex flex-col gap-4 md:gap-5 h-120 overflow-auto">
@@ -92,13 +84,24 @@ function CartInner({ onCloseMobile }: { onCloseMobile?: () => void }) {
         </button>
       </div>
       <div className="flex flex-col mt-4">
+        <label htmlFor="table-number" className="text-white">
+          Table Number
+        </label>
+        <input
+          type="number"
+          required
+          value={tableNumber}
+          onChange={(e) => setTableNumber(Number(e.target.value))}
+          placeholder="Table number"
+          className="rounded-sm bg-[#313c4d] px-3 py-1 my-1 text-sm text-gray-100 md:px-5 w-32 outline-none"
+        />
         <textarea
           name="note"
           value={note}
           onChange={(e) => setNote(e.target.value)}
           rows={3}
           placeholder="No Onion"
-          className="bg-[#1E293B] resize-none text-gray-500 px-4 py-2 outline-0"
+          className="bg-[#273141] resize-none text-gray-100 px-4 py-2 outline-0"
         ></textarea>
         <button
           type="submit"

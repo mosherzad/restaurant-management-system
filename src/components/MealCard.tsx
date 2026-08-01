@@ -3,6 +3,7 @@
 import { addToCart } from "@/features/cart/cartSlice";
 import { RootState } from "@/store";
 import Image from "next/image";
+import { MdAdd } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 
 interface Meal {
@@ -18,7 +19,7 @@ interface MealProps {
   data: Meal;
 }
 const MealCard = ({ data }: MealProps) => {
-  const items = useSelector((state: RootState) => state.cart.cartItems);
+  // const items = useSelector((state: RootState) => state.cart.cartItems);
   // console.log(items);
   const dispatch = useDispatch();
   return (
@@ -35,9 +36,6 @@ const MealCard = ({ data }: MealProps) => {
         <p className="mt-1 wrap-break-word text-[18px] font-semibold text-white">
           {data.name}
         </p>
-        <p className="mt-1 wrap-break-word text-sm font-semibold text-gray-500">
-          {data.description}
-        </p>
         <div className="flex items-center justify-between gap-2">
           <span className="font-extrabold text-[#EC6D13]">
             ${Number(data.price).toFixed(0)}
@@ -50,9 +48,9 @@ const MealCard = ({ data }: MealProps) => {
           <button
             onClick={() => dispatch(addToCart(data))}
             type="button"
-            className="cursor-pointer rounded-lg bg-[#EC6D13] px-4 py-2 font-bold text-white"
+            className="cursor-pointer rounded-md bg-[#EC6D13] px-2 py-1 font-bold text-white"
           >
-            Add to dish
+            <MdAdd size={25} />
           </button>
         </div>
       </div>

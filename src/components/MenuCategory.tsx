@@ -34,7 +34,7 @@ const MenuCategory = ({ onOpenCart }: MenuCategoryProps) => {
       <button
         type="button"
         onClick={onOpenCart}
-        className="flex shrink-0 items-center text-3xl text-[#EC6D13] transition-opacity hover:opacity-90 lg:hidden"
+        className="flex shrink-0 ml-4 items-center text-3xl text-[#EC6D13] transition-opacity hover:opacity-90 lg:hidden"
         aria-label="Open cart"
       >
         <FaShoppingCart />

@@ -46,7 +46,7 @@ export default function RootLayout({
           <div className="min-h-screen">
             <Sidebar />
 
-            <main className="md:ml-50  min-w-0 px-3 pt-4 pb-20 sm:px-4 md:px-5 md:pb-5 md:pt-5">
+            <main className="md:ml-50 min-w-0 px-3 pt-4 pb-20 sm:px-4 md:px-5 md:pb-5 md:pt-5">
               {children}
             </main>
           </div>
