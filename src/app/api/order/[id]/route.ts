@@ -1,4 +1,5 @@
 import { Prisma } from "@/generated/prisma/client";
+import { verifyToken } from "@/lib/jwt/verifyToken";
 import prisma from "@/lib/prisma";
 import { InputOrderItems } from "@/lib/types/menu";
 import { NextRequest, NextResponse } from "next/server";
@@ -40,6 +41,11 @@ export async function PATCH(
 
     const body = await request.json();
 
+    const userPayload = verifyToken(request);
+
+    if (!userPayload)
+      return NextResponse.json({ message: "unauthorized" }, { status: 401 });
+
     if (!id)
       return NextResponse.json({ message: "invalid ID" }, { status: 404 });
 
@@ -54,22 +60,45 @@ export async function PATCH(
     const data: Prisma.OrderUpdateInput = {};
 
     if (body.status !== undefined) {
+      if (userPayload.role !== "KITCHEN" && userPayload.role !== "ADMIN")
+        return NextResponse.json(
+          {
+            message: "you don't have permission to update status",
+          },
+          { status: 403 },
+        );
       data.status = body.status;
     }
 
-    if (body.tableNumber !== undefined) {
+    if (body.tableNumber !== undefined || body.note !== undefined) {
+      if (userPayload.role !== "STAFF" && userPayload.role !== "ADMIN")
+        return NextResponse.json(
+          {
+            message:
+              "you don't have permission to update note and table number",
+          },
+          { status: 403 },
+        );
       data.tableNumber = body.tableNumber;
-    }
-
-    if (body.note !== undefined) {
       data.note = body.note;
     }
 
     if (body.paymentStatus !== undefined) {
+      if (userPayload.role !== "CASHER" && userPayload.role !== "ADMIN")
+        return NextResponse.json(
+          { message: "you don't have permission to update payment status" },
+          { status: 403 },
+        );
       data.paymentStatus = body.paymentStatus;
     }
 
     if (body.items) {
+      if (userPayload.role !== "STAFF" && userPayload.role !== "ADMIN") {
+        return NextResponse.json(
+          { message: "you don't have permission to update items" },
+          { status: 403 },
+        );
+      }
       const menuItems = await prisma.menuItem.findMany({
         where: {
           id: {
@@ -118,11 +147,19 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  response: NextResponse,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
+
+    const userPayload = verifyToken(request);
+
+    if (!userPayload)
+      return NextResponse.json({ message: "unauthorized" }, { status: 401 });
+
+    if (userPayload.role !== "STAFF")
+      return NextResponse.json({ message: "access denied" }, { status: 403 });
 
     const selectedOrder = await prisma.order.findUnique({
       where: { id: parseInt(id) },

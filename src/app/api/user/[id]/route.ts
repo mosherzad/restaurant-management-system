@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { NextResponse, NextRequest } from "next/server";
-
+import bcrypt from "bcrypt";
 interface Prop {
   params: Promise<{ id: string }>;
 }
@@ -84,13 +84,14 @@ export async function PATCH(request: NextRequest, { params }: Prop) {
     if (!user)
       return NextResponse.json({ message: "User not found" }, { status: 404 });
 
+    const hashedPassword = await bcrypt.hash(body.password, 10);
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
         ...(body.name && { name: body.name }),
         ...(body.email && { email: body.email }),
         ...(body.role && { role: body.role }),
-        ...(body.password && { password: body.password }),
+        ...(body.password && { password: hashedPassword }),
       },
     });
 

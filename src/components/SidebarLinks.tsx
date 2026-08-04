@@ -1,9 +1,10 @@
 "use client";
 import Link from "next/link";
 import { IconType } from "react-icons";
-import { MdDashboard, MdFastfood, MdFoodBank } from "react-icons/md";
+import { MdDashboard, MdFastfood, MdFoodBank, MdLogout } from "react-icons/md";
 import { usePathname } from "next/navigation";
 import { FaBasketShopping, FaKitchenSet } from "react-icons/fa6";
+import LogoutBtn from "./LogoutBtn";
 
 type LinkItem = {
   label: string;
@@ -63,6 +64,8 @@ const SidebarLinks = () => {
             </Link>
           );
         })}
+
+        <LogoutBtn />
       </nav>
     </>
   );

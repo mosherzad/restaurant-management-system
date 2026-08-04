@@ -1,8 +1,6 @@
-import LoginForm from "@/components/LoginForm";
 import Image from "next/image";
-import Link from "next/link";
-import { IoRestaurantOutline } from "react-icons/io5";
-const Login = () => {
+import SignUpForm from "@/components/SignUpForm";
+const page = () => {
   return (
     <div className="relative h-screen w-full">
       <Image
@@ -16,10 +14,10 @@ const Login = () => {
       <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/50 to-black/80" />
 
       <div className="relative z-10 flex h-full items-center justify-center">
-        <LoginForm />
+        <SignUpForm />
       </div>
     </div>
   );
 };
 
-export default Login;
+export default page;

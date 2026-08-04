@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { verifyToken } from "@/lib/jwt/verifyToken";
 import prisma from "@/lib/prisma";
 import { NextResponse, NextRequest } from "next/server";
 
@@ -52,6 +53,15 @@ export async function PUT(
         { status: 400 },
       );
     }
+
+    const userPayload = verifyToken(req);
+
+    if (!userPayload)
+      return NextResponse.json({ message: "unauthorized" }, { status: 401 });
+
+    if (userPayload.role !== "ADMIN")
+      return NextResponse.json({ message: "access denied" }, { status: 403 });
+
     const updatedCategory = await prisma.category.update({
       where: { id: parseInt(id) },
       data: {
@@ -87,6 +97,14 @@ export async function DELETE(
 
     if (isNaN(Number(id)))
       return NextResponse.json({ message: "invalid ID" }, { status: 400 });
+
+    const userPayload = verifyToken(req);
+
+    if (!userPayload)
+      return NextResponse.json({ message: "unauthorized" }, { status: 401 });
+
+    if (userPayload.role !== "ADMIN")
+      return NextResponse.json({ message: "access denied" }, { status: 403 });
 
     await prisma.category.delete({ where: { id: parseInt(id) } });
 

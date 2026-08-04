@@ -1,16 +1,12 @@
+import { verifyToken } from "@/lib/jwt/verifyToken";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+
 export async function GET() {
   try {
     const menuItems = await prisma.menuItem.findMany({
       include: { category: true },
     });
-
-    if (!menuItems)
-      return NextResponse.json(
-        { message: "failed to fetch data" },
-        { status: 400 },
-      );
 
     return NextResponse.json({ data: menuItems }, { status: 200 });
   } catch (error) {
@@ -25,6 +21,14 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+
+    const userPayload = verifyToken(request);
+
+    if (!userPayload)
+      return NextResponse.json({ message: "unauthorized" }, { status: 401 });
+
+    if (userPayload.role !== "ADMIN")
+      return NextResponse.json({ message: "access denied" }, { status: 403 });
 
     await prisma.menuItem.create({
       data: {

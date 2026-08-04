@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { verifyToken } from "@/lib/jwt/verifyToken";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 const getItemId = (id: string) => {
   const menuId = Number(id);
 
-  if (isNaN(menuId)) return null;
+  if (!Number.isInteger(menuId) || menuId <= 0) return null;
 
   return menuId;
 };
@@ -49,18 +51,16 @@ export async function PUT(
 
     const menuId = getItemId(id);
 
+    const userPayload = verifyToken(request);
+
+    if (!userPayload)
+      return NextResponse.json({ message: "unauthorized" }, { status: 401 });
+
+    if (userPayload.role !== "ADMIN")
+      return NextResponse.json({ message: "access denied" }, { status: 403 });
+
     if (menuId === null)
       return NextResponse.json({ message: "invalid ID" }, { status: 400 });
-
-    const existingMenuItem = await prisma.menuItem.findUnique({
-      where: { id: menuId },
-    });
-
-    if (!existingMenuItem)
-      return NextResponse.json(
-        { message: "item does not exists" },
-        { status: 404 },
-      );
 
     const updatedMenuItem = await prisma.menuItem.update({
       where: { id: menuId },
@@ -77,9 +77,11 @@ export async function PUT(
       { message: "Menu item updated successfully", data: updatedMenuItem },
       { status: 200 },
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
 
+    if (error.code === "P2025")
+      return NextResponse.json({ message: "item not found" }, { status: 404 });
     return NextResponse.json(
       { message: "internal server error" },
       { status: 500 },
@@ -88,7 +90,7 @@ export async function PUT(
 }
 
 export async function DELETE(
-  reques: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
@@ -97,10 +99,17 @@ export async function DELETE(
     if (isNaN(Number(id)))
       return NextResponse.json({ message: "invalid ID" }, { status: 400 });
 
+    const userPayload = verifyToken(request);
+
+    if (!userPayload)
+      return NextResponse.json({ message: "unauthorized" }, { status: 401 });
+
+    if (userPayload.role !== "ADMIN")
+      return NextResponse.json({ message: "access denied" }, { status: 403 });
+
     await prisma.menuItem.delete({ where: { id: parseInt(id) } });
 
     return NextResponse.json({ message: "item deleted" }, { status: 200 });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error(error);
 

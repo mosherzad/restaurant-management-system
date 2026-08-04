@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextResponse, NextRequest } from "next/server";
 import { InputOrderItems } from "@/lib/types/menu";
+import { verifyToken } from "@/lib/jwt/verifyToken";
 
 export async function GET() {
   try {
@@ -18,6 +19,14 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+
+    const userPayload = verifyToken(request);
+
+    if (!userPayload)
+      return NextResponse.json({ message: "unauthorized" }, { status: 401 });
+
+    if (userPayload.role !== "STAFF")
+      return NextResponse.json({ message: "access denied" }, { status: 403 });
 
     const menuItems = await prisma.menuItem.findMany({
       where: {
