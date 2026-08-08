@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { verifyToken } from "@/lib/jwt/verifyToken";
 import prisma from "@/lib/prisma";
+import { updateMenuItemSchema } from "@/lib/validationSchema";
 import { NextRequest, NextResponse } from "next/server";
 
 const getItemId = (id: string) => {
@@ -62,14 +63,27 @@ export async function PUT(
     if (menuId === null)
       return NextResponse.json({ message: "invalid ID" }, { status: 400 });
 
+    const validation = updateMenuItemSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          message: "validation error",
+          errors: validation.error.flatten().fieldErrors,
+        },
+        { status: 400 },
+      );
+    }
+
+    const data = validation.data;
     const updatedMenuItem = await prisma.menuItem.update({
       where: { id: menuId },
       data: {
-        name: body.name,
-        price: body.price,
-        image: body.image,
-        categoryId: body.categoryId,
-        available: body.available,
+        name: data.name,
+        price: data.price,
+        image: data.image,
+        categoryId: data.categoryId,
+        available: data.available,
       },
     });
 

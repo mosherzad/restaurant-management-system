@@ -23,7 +23,7 @@ const AddCategory = () => {
         body: JSON.stringify({ name }),
       });
 
-      if (!res.ok) throw new Error();
+      if (!res.ok) throw new Error("failed to add category");
 
       toast.success("Category added");
 

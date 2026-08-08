@@ -1,25 +1,18 @@
 "use client";
-import { FaBasketShopping } from "react-icons/fa6";
+import { FaBasketShopping, FaTrash } from "react-icons/fa6";
 import { MdPendingActions } from "react-icons/md";
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaEdit } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import EditOrderModel from "@/components/EditOrderModel";
+import { Order } from "@/lib/types/menu";
+import { deleteOrderById } from "@/api-calls/orderApiCall";
 
-type Order = {
-  id: number;
-  tableNumber: number;
-  status: string;
-  total: number;
-  note: string;
-  items: {
-    quantity: number;
-    menuItem: {
-      name: string;
-    };
-  }[];
-};
 const Orders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const cardStyle = "p-4 rounded-md border border-white/20 text-white";
+
   const totalOrders = orders.length;
   const pendingOrders = orders.filter(
     (order) => order.status === "PENDING",
@@ -28,6 +21,17 @@ const Orders = () => {
   const completedOrders = orders.filter(
     (order) => order.status === "COMPLETED",
   ).length;
+
+  const handleDeleteOrder = async (orderId: number) => {
+    try {
+      await deleteOrderById(orderId);
+
+      setOrders((prev) => prev.filter((order) => order.id !== orderId));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -49,8 +53,9 @@ const Orders = () => {
 
     fetchOrders();
   }, []);
+
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-6 relative">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className={cardStyle + " bg-blue-500/20"}>
           <div className="flex items-center gap-2 mb-2">
@@ -103,15 +108,38 @@ const Orders = () => {
                     ${order.total}
                   </h6>
                 </div>
-                <span
-                  className={`font-semibold text-sm ${order.status === "READY" ? "text-green-500" : order.status === "PENDING" ? "text-red-500" : order.status === "COOKING" ? "text-yellow-400" : "text-blue-500"}`}
-                >
-                  {order.status}
-                </span>
+                <div className="flex items-center space-x-3">
+                  <span
+                    className={`font-semibold text-sm ${order.status === "READY" ? "text-green-500" : order.status === "PENDING" ? "text-red-500" : order.status === "COOKING" ? "text-yellow-400" : "text-blue-500"}`}
+                  >
+                    {order.status}
+                  </span>
+                  <FaEdit
+                    onClick={() => {
+                      setSelectedOrder(order);
+                      setIsOpen(true);
+                    }}
+                    size={20}
+                    className="hover:text-[#EC6D13] transition-all duration-200 cursor-pointer"
+                  />
+                  <FaTrash
+                    onClick={() => handleDeleteOrder(order.id)}
+                    size={20}
+                    className="hover:text-[#EC6D13] transition-all duration-200 cursor-pointer"
+                  />
+                </div>
               </div>
             );
           })}
         </div>
+        {selectedOrder && (
+          <EditOrderModel
+            isOpen={isOpen}
+            key={selectedOrder?.id}
+            order={selectedOrder}
+            onClose={() => setIsOpen(false)}
+          />
+        )}
       </div>
     </div>
   );

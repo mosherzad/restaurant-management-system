@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { NextResponse, NextRequest } from "next/server";
 import { InputOrderItems } from "@/lib/types/menu";
 import { verifyToken } from "@/lib/jwt/verifyToken";
+import { createOrderSchema } from "@/lib/validationSchema";
 
 export async function GET() {
   try {
@@ -28,6 +29,20 @@ export async function POST(request: NextRequest) {
     if (userPayload.role !== "STAFF")
       return NextResponse.json({ message: "access denied" }, { status: 403 });
 
+    const validation = createOrderSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          message: "validation failed",
+          errors: validation.error.flatten().fieldErrors,
+        },
+        { status: 400 },
+      );
+    }
+
+    const data = validation.data;
+
     const menuItems = await prisma.menuItem.findMany({
       where: {
         id: {
@@ -38,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     console.log("menu item", menuItems);
 
-    const total = body.items.reduce((sum: number, item: InputOrderItems) => {
+    const total = data.items.reduce((sum: number, item: InputOrderItems) => {
       const menuItem = menuItems.find((m) => m.id === item.menuItemId);
 
       return sum + menuItem!.price * item.quantity;
@@ -47,12 +62,13 @@ export async function POST(request: NextRequest) {
     console.log("total", total);
     const newOrder = await prisma.order.create({
       data: {
-        tableNumber: body.tableNumber,
-        note: body.note,
+        tableNumber: data.tableNumber,
+        // TODO Make note optional in prisma model
+        note: data.note,
         total,
 
         items: {
-          create: body.items.map((item: InputOrderItems) => ({
+          create: data.items.map((item: InputOrderItems) => ({
             quantity: item.quantity,
             menuItemId: item.menuItemId,
           })),

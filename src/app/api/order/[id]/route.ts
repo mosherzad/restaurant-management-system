@@ -2,6 +2,7 @@ import { Prisma } from "@/generated/prisma/client";
 import { verifyToken } from "@/lib/jwt/verifyToken";
 import prisma from "@/lib/prisma";
 import { InputOrderItems } from "@/lib/types/menu";
+import { updateOrderSchema } from "@/lib/validationSchema";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -10,13 +11,14 @@ export async function GET(
 ) {
   const { id } = await params;
 
+  const orderId = Number(id);
   try {
     const order = await prisma.order.findUnique({
-      where: { id: parseInt(id) },
+      where: { id: orderId },
       include: { items: true },
     });
 
-    if (!id)
+    if (isNaN(orderId))
       return NextResponse.json({ message: "invalid ID" }, { status: 400 });
 
     if (!order)
@@ -46,20 +48,42 @@ export async function PATCH(
     if (!userPayload)
       return NextResponse.json({ message: "unauthorized" }, { status: 401 });
 
-    if (!id)
+    const orderId = Number(id);
+    if (isNaN(orderId))
       return NextResponse.json({ message: "invalid ID" }, { status: 404 });
 
+    const validation = updateOrderSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          message: "Validation failed",
+          errors: validation.error.flatten().fieldErrors,
+        },
+        { status: 400 },
+      );
+    }
+
+    const data = validation.data;
+
+    if (Object.keys(data).length === 0) {
+      return NextResponse.json(
+        { message: "No fields provided to update." },
+        { status: 400 },
+      );
+    }
+
     const existingOrder = await prisma.order.findUnique({
-      where: { id: parseInt(id) },
+      where: { id: orderId },
       include: { items: true },
     });
 
     if (!existingOrder)
       return NextResponse.json({ message: "order not found" }, { status: 404 });
 
-    const data: Prisma.OrderUpdateInput = {};
+    const dataToUpdate: Prisma.OrderUpdateInput = {};
 
-    if (body.status !== undefined) {
+    if (data.status !== undefined) {
       if (userPayload.role !== "KITCHEN" && userPayload.role !== "ADMIN")
         return NextResponse.json(
           {
@@ -67,10 +91,10 @@ export async function PATCH(
           },
           { status: 403 },
         );
-      data.status = body.status;
+      dataToUpdate.status = data.status;
     }
 
-    if (body.tableNumber !== undefined || body.note !== undefined) {
+    if (data.tableNumber !== undefined || data.note !== undefined) {
       if (userPayload.role !== "STAFF" && userPayload.role !== "ADMIN")
         return NextResponse.json(
           {
@@ -79,20 +103,20 @@ export async function PATCH(
           },
           { status: 403 },
         );
-      data.tableNumber = body.tableNumber;
-      data.note = body.note;
+      dataToUpdate.tableNumber = data.tableNumber;
+      dataToUpdate.note = data.note;
     }
 
-    if (body.paymentStatus !== undefined) {
+    if (data.paymentStatus !== undefined) {
       if (userPayload.role !== "CASHER" && userPayload.role !== "ADMIN")
         return NextResponse.json(
           { message: "you don't have permission to update payment status" },
           { status: 403 },
         );
-      data.paymentStatus = body.paymentStatus;
+      dataToUpdate.paymentStatus = data.paymentStatus;
     }
 
-    if (body.items) {
+    if (data.items) {
       if (userPayload.role !== "STAFF" && userPayload.role !== "ADMIN") {
         return NextResponse.json(
           { message: "you don't have permission to update items" },
@@ -102,24 +126,31 @@ export async function PATCH(
       const menuItems = await prisma.menuItem.findMany({
         where: {
           id: {
-            in: body.items.map((item: InputOrderItems) => item.menuItemId),
+            in: data.items.map((item: InputOrderItems) => item.menuItemId),
           },
         },
       });
 
+      if (menuItems.length !== data.items.length) {
+        return NextResponse.json(
+          { message: "One or more menu items do not exist." },
+          { status: 400 },
+        );
+      }
+
       const total = menuItems.reduce((sum, menuItem) => {
-        const orderItem = body.items.find(
+        const orderItem = data.items!.find(
           (item: InputOrderItems) => item.menuItemId === menuItem.id,
         );
 
         return sum + menuItem.price * (orderItem?.quantity ?? 0);
       }, 0);
 
-      data.total = total;
+      dataToUpdate.total = total;
 
-      data.items = {
+      dataToUpdate.items = {
         deleteMany: {},
-        create: body.items.map((item: InputOrderItems) => ({
+        create: data.items.map((item: InputOrderItems) => ({
           quantity: item.quantity,
           menuItemId: item.menuItemId,
         })),
@@ -128,9 +159,9 @@ export async function PATCH(
 
     const updatedOrder = await prisma.order.update({
       where: {
-        id: parseInt(id),
+        id: orderId,
       },
-      data,
+      data: dataToUpdate,
     });
 
     return NextResponse.json(
@@ -152,27 +183,34 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-
+    const orderId = Number(id);
     const userPayload = verifyToken(request);
 
     if (!userPayload)
       return NextResponse.json({ message: "unauthorized" }, { status: 401 });
 
-    if (userPayload.role !== "STAFF")
+    if (userPayload.role !== "STAFF" && userPayload.role !== "ADMIN")
       return NextResponse.json({ message: "access denied" }, { status: 403 });
 
-    const selectedOrder = await prisma.order.findUnique({
-      where: { id: parseInt(id) },
-    });
+    if (isNaN(orderId)) {
+      return NextResponse.json({ message: "invalid ID" }, { status: 400 });
+    }
 
-    if (!selectedOrder)
-      return NextResponse.json({ message: "order not found" }, { status: 404 });
+    await prisma.order.delete({ where: { id: orderId } });
 
-    await prisma.order.delete({ where: { id: selectedOrder.id } });
-
-    return NextResponse.json(null, { status: 200 });
+    return NextResponse.json(
+      { message: "order deleted successfully" },
+      { status: 200 },
+    );
   } catch (error) {
     console.log(error);
+
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      return NextResponse.json({ message: "order not found" }, { status: 404 });
+    }
     return NextResponse.json(
       { message: "internal server error" },
       { status: 500 },

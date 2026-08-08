@@ -1,5 +1,6 @@
 import { verifyToken } from "@/lib/jwt/verifyToken";
 import prisma from "@/lib/prisma";
+import { menuItemSchema } from "@/lib/validationSchema";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
@@ -30,13 +31,26 @@ export async function POST(request: NextRequest) {
     if (userPayload.role !== "ADMIN")
       return NextResponse.json({ message: "access denied" }, { status: 403 });
 
+    const validation = menuItemSchema.safeParse(body);
+
+    if (!validation.success)
+      return NextResponse.json(
+        {
+          message: "validation failed",
+          errors: validation.error.flatten().fieldErrors,
+        },
+        { status: 400 },
+      );
+
+    const data = validation.data;
+
     await prisma.menuItem.create({
       data: {
-        name: body.name,
-        price: body.price,
-        image: body.image,
-        categoryId: body.categoryId,
-        available: body.available,
+        name: data.name,
+        price: data.price,
+        image: data.image,
+        categoryId: data.categoryId,
+        available: data.available,
       },
     });
 
