@@ -1,3 +1,4 @@
+import { fetchDashboardData } from "@/api-calls/dashboardApiCalls";
 import AddCategory from "@/components/AddCategory";
 import AddMeal from "@/components/AddMeal";
 import CategoryList from "@/components/CategoryList";
@@ -8,13 +9,8 @@ import RecentOrders from "@/components/RecentOrders";
 import StatusCard from "@/components/StatusCard";
 
 const Dashboard = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`);
+  const statics = await fetchDashboardData();
 
-  if (!res.ok) throw new Error("failed to fetch data");
-
-  const statics = await res.json();
-
-  console.log(statics.categoryies);
   return (
     <div>
       <DashboardHeader />

@@ -42,3 +42,20 @@ export const updateOrderSchema = z.object({
     )
     .optional(),
 });
+
+const userSchema = z.object({
+  name: z.string().min(3),
+  email: z.email(),
+  password: z.string().min(8),
+});
+
+export const loginSchema = z.object({
+  email: z.string().email("invlid email"),
+  password: z.string(),
+});
+
+export const signupSchema = userSchema;
+
+export const createUserSchema = userSchema.extend({
+  role: z.enum(["ADMIN", "STAFF", "KITCHEN", "CASHIER"]),
+});

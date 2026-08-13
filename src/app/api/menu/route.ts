@@ -9,7 +9,7 @@ export async function GET() {
       include: { category: true },
     });
 
-    return NextResponse.json({ data: menuItems }, { status: 200 });
+    return NextResponse.json({ menuItems }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

@@ -1,8 +1,13 @@
 import prisma from "@/lib/prisma";
 import { NextResponse, NextRequest } from "next/server";
 import { verifyToken } from "@/lib/jwt/verifyToken";
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const userPayload = verifyToken(request);
+
+    if (!userPayload)
+      return NextResponse.json({ message: "unauthorized" }, { status: 401 });
+
     const categories = await prisma.category.findMany({
       include: { menuItem: true },
     });

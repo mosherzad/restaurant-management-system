@@ -1,29 +1,22 @@
 import {
   decreaseQuantity,
   increaseQuantity,
+  Item,
   removeFromCart,
 } from "@/features/cart/cartSlice";
 import Image from "next/image";
 import { FaTrashAlt } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 
-interface Meal {
-  menuItemId: number;
-  name: string;
-  image: string;
-  price: number;
-  quantity: number;
-}
-
 interface MealProps {
-  data: Meal;
+  data: Item;
 }
 const CartCard = ({ data }: MealProps) => {
   const dispatch = useDispatch();
   return (
     <div className="flex min-h-20 w-full items-stretch justify-between gap-2 rounded-lg border border-gray-700 bg-[#141d2d] p-2 sm:items-center sm:justify-around sm:p-0">
       <div className="flex min-w-0 flex-1 items-center space-x-2">
-        <div className="relative p-10 flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-md sm:h-full sm:w-20 sm:rounded-none">
+        <div className="relative  flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-md sm:h-20 sm:w-20 sm:rounded-none">
           <Image
             src={data.image}
             fill
@@ -41,7 +34,7 @@ const CartCard = ({ data }: MealProps) => {
           <div className="mt-1 flex w-[min(100px,100%)] items-center justify-between rounded-lg bg-[#1E293B] px-2">
             <button
               type="button"
-              onClick={() => dispatch(decreaseQuantity(data.menuItemId))}
+              onClick={() => dispatch(decreaseQuantity(data.id))}
               className="text-white ml-1 text-lg cursor-pointer"
             >
               -
@@ -51,7 +44,7 @@ const CartCard = ({ data }: MealProps) => {
             </span>
             <button
               type="button"
-              onClick={() => dispatch(increaseQuantity(data.menuItemId))}
+              onClick={() => dispatch(increaseQuantity(data.id))}
               className="text-white ml-1 text-lg cursor-pointer"
             >
               +
@@ -65,7 +58,7 @@ const CartCard = ({ data }: MealProps) => {
         </span>
         <FaTrashAlt
           type="button"
-          onClick={() => dispatch(removeFromCart(data.menuItemId))}
+          onClick={() => dispatch(removeFromCart(data.id))}
           className="text-gray-600 cursor-pointer"
           size={23}
         />

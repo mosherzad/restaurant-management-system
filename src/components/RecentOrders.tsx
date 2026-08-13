@@ -1,3 +1,4 @@
+import { getAllOrders } from "@/api-calls/orderApiCall";
 import Link from "next/link";
 import { MdListAlt } from "react-icons/md";
 
@@ -9,9 +10,7 @@ type Orders = {
   createdAt: string;
 };
 const RecentOrders = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/order`);
-  const { orders } = await res.json();
-  console.log(orders);
+  const { orders } = await getAllOrders();
 
   function getTimeAgo(date: string) {
     const createdAt = new Date(date);

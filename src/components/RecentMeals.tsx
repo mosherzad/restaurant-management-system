@@ -1,5 +1,7 @@
 import { FaUtensils } from "react-icons/fa6";
 import Link from "next/link";
+import { getAllMeals } from "@/api-calls/mealApiCall";
+
 type Meal = {
   id: number;
   name: string;
@@ -11,17 +13,9 @@ type Meal = {
 };
 
 const RecentMeals = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/menu`, {
-    cache: "no-store",
-  });
+  const { menuItems } = await getAllMeals();
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch meals");
-  }
-
-  const { data } = await res.json();
-  const meals: Meal[] = data.slice(0, 6);
-  console.log(meals);
+  const latestMeal = menuItems?.slice(0, 7);
   return (
     <section className="rounded-2xl p-6 w-[50%]">
       <div className="mb-6 flex items-center justify-between">
@@ -38,7 +32,7 @@ const RecentMeals = async () => {
       </div>
 
       <div className="space-y-3">
-        {meals.map((meal) => (
+        {latestMeal.map((meal: Meal) => (
           <div
             key={meal.id}
             className="flex items-center justify-between rounded-xl bg-[#111827] p-4 transition hover:bg-[#1A2438]"

@@ -4,8 +4,13 @@ import { InputOrderItems } from "@/lib/types/menu";
 import { verifyToken } from "@/lib/jwt/verifyToken";
 import { createOrderSchema } from "@/lib/validationSchema";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const userPayload = verifyToken(request);
+
+    if (!userPayload)
+      return NextResponse.json({ message: "unauthorized" }, { status: 401 });
+
     const orders = await prisma.order.findMany({
       include: { items: { include: { menuItem: true } } },
       orderBy: { createdAt: "desc" },
@@ -46,7 +51,7 @@ export async function POST(request: NextRequest) {
     const menuItems = await prisma.menuItem.findMany({
       where: {
         id: {
-          in: body.items.map((item: InputOrderItems) => item.menuItemId),
+          in: data.items.map((item: InputOrderItems) => item.menuItemId),
         },
       },
     });

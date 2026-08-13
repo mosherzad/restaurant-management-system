@@ -1,5 +1,3 @@
-"use client";
-
 import { FaShoppingBag, FaClock, FaFire, FaDollarSign } from "react-icons/fa";
 
 type StatusCardProps = {

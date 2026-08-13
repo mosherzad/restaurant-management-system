@@ -17,3 +17,17 @@ export const verifyToken = (request: NextRequest) => {
     return null;
   }
 };
+
+export function verifyTokenFromToken(token: string) {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+
+    if (typeof decoded === "string") {
+      return null;
+    }
+
+    return decoded;
+  } catch {
+    return null;
+  }
+}

@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
-type Item = {
-  menuItemId: number;
+export type Item = {
+  id: number;
   name: string;
   price: number;
   quantity: number;
@@ -32,7 +33,7 @@ export const cartSlice = createSlice({
     },
     addToCart: (state, action) => {
       const existingItem = state.cartItems.find(
-        (item) => item.menuItemId === action.payload.menuItemId,
+        (item) => item.id === action.payload.id,
       );
 
       if (existingItem) {
@@ -42,22 +43,24 @@ export const cartSlice = createSlice({
           ...action.payload,
           quantity: 1,
         });
+        toast.success("Item Added");
       }
     },
 
     removeFromCart: (state, action) => {
       const existingItem = state.cartItems.find(
-        (item) => item.menuItemId === action.payload,
+        (item) => item.id === action.payload,
       );
 
       state.cartItems = state.cartItems.filter(
-        (item) => item.menuItemId !== existingItem?.menuItemId,
+        (item) => item.id !== existingItem?.id,
       );
+      toast.success("Item Removed");
     },
 
     increaseQuantity: (state, action) => {
       const existingItem = state.cartItems.find(
-        (item) => item.menuItemId === action.payload,
+        (item) => item.id === action.payload,
       );
 
       if (existingItem) {
@@ -66,7 +69,7 @@ export const cartSlice = createSlice({
     },
     decreaseQuantity: (state, action) => {
       const existingItem = state.cartItems.find(
-        (item) => item.menuItemId === action.payload,
+        (item) => item.id === action.payload,
       );
 
       if (existingItem) {
@@ -74,7 +77,7 @@ export const cartSlice = createSlice({
           existingItem.quantity -= 1;
         } else {
           state.cartItems = state.cartItems.filter(
-            (item) => item.menuItemId !== action.payload.menuItemId,
+            (item) => item.id !== action.payload,
           );
         }
       }

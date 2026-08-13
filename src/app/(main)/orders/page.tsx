@@ -5,7 +5,6 @@ import { FaCheckCircle, FaEdit } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import EditOrderModel from "@/components/EditOrderModel";
 import { Order } from "@/lib/types/menu";
-import { deleteOrderById } from "@/api-calls/orderApiCall";
 
 const Orders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -24,9 +23,22 @@ const Orders = () => {
 
   const handleDeleteOrder = async (orderId: number) => {
     try {
-      await deleteOrderById(orderId);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/order/${orderId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-      setOrders((prev) => prev.filter((order) => order.id !== orderId));
+      if (!res.ok) {
+        const error = await res.text();
+        console.error("Dashboard API error:", error);
+
+        throw new Error("Failed to fetch dashboard data");
+      }
     } catch (error) {
       console.error(error);
     }
@@ -94,9 +106,18 @@ const Orders = () => {
               >
                 <div>
                   <span className="font-semibold"> #{index + 1}</span> -{" "}
-                  <span className="text-md">
-                    {" "}
-                    {order.items.map((item) => item.menuItem.name).join(", ")}
+                  <span className="text-sm text-slate-700">
+                    {order.items.map((item) => (
+                      <span
+                        key={item.menuItemId}
+                        className="mr-2 inline-flex items-center gap-1"
+                      >
+                        <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-sm font-semibold text-amber-700">
+                          ×{item.quantity}
+                        </span>
+                        <span className="text-white">{item.menuItem.name}</span>
+                      </span>
+                    ))}
                   </span>
                   {order.note && (
                     <span className="text-gray-300"> ({order.note})</span>

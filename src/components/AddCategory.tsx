@@ -41,11 +41,15 @@ const AddCategory = () => {
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label className="mb-2 block text-sm text-gray-300">
+          <label
+            id="category"
+            className="mb-2 block font-semibold text-sm text-white"
+          >
             Category Name
           </label>
 
           <input
+            name="category"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}

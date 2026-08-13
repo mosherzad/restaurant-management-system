@@ -1,40 +1,56 @@
+import { verifyToken } from "@/lib/jwt/verifyToken";
 import prisma from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(response: NextResponse) {
+export async function GET(request: NextRequest) {
   try {
-    const totalOrders = await prisma.order.count();
+    const userPayload = verifyToken(request);
 
-    const pendingOrders = await prisma.order.count({
-      where: {
-        status: "PENDING",
-      },
-    });
+    if (!userPayload)
+      return NextResponse.json({ message: "unauthorized" }, { status: 401 });
 
-    const cookingOrders = await prisma.order.count({
-      where: {
-        status: "COOKING",
-      },
-    });
+    const [
+      totalOrders,
+      pendingOrders,
+      cookingOrders,
+      readyOrders,
+      revenue,
+      totalCategories,
+      categories,
+      totalMeals,
+    ] = await Promise.all([
+      prisma.order.count(),
 
-    const readyOrders = await prisma.order.count({
-      where: {
-        status: "READY",
-      },
-    });
+      prisma.order.count({
+        where: {
+          status: "PENDING",
+        },
+      }),
 
-    const revenue = await prisma.order.aggregate({
-      _sum: {
-        total: true,
-      },
-    });
+      prisma.order.count({
+        where: {
+          status: "COOKING",
+        },
+      }),
 
-    const totalCategories = await prisma.category.count();
+      prisma.order.count({
+        where: {
+          status: "READY",
+        },
+      }),
 
-    const categories = await prisma.category.findMany();
+      prisma.order.aggregate({
+        _sum: {
+          total: true,
+        },
+      }),
 
-    const totalMeals = await prisma.menuItem.count();
+      prisma.category.count(),
 
+      prisma.category.findMany(),
+
+      prisma.menuItem.count(),
+    ]);
     return NextResponse.json(
       {
         totalOrders,

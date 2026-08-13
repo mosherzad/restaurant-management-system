@@ -6,13 +6,18 @@ import { updateOrderSchema } from "@/lib/validationSchema";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  response: NextResponse,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
 
   const orderId = Number(id);
   try {
+    const userPayload = verifyToken(request);
+
+    if (!userPayload)
+      return NextResponse.json({ message: "unauthorized" }, { status: 401 });
+
     const order = await prisma.order.findUnique({
       where: { id: orderId },
       include: { items: true },

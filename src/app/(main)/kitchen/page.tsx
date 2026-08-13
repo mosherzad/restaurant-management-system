@@ -127,7 +127,21 @@ const Kitchen = () => {
                 <div>
                   <span className="font-medium">
                     #1023 -{" "}
-                    {order.items.map((item) => item.menuItem.name).join(", ")}
+                    <span className="text-sm text-slate-700">
+                      {order.items.map((item, index) => (
+                        <span
+                          key={index}
+                          className="mr-2 inline-flex items-center gap-1"
+                        >
+                          <span className="rounded-md bg-amber-100 px-1.5 py-0.5 text-sm font-semibold text-amber-700">
+                            ×{item.quantity}
+                          </span>
+                          <span className="text-white">
+                            {item.menuItem.name}
+                          </span>
+                        </span>
+                      ))}
+                    </span>{" "}
                   </span>
                   {order.note && (
                     <span className="text-gray-300"> ({order.note}) </span>

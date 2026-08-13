@@ -1,3 +1,4 @@
+import { getAllCategories } from "@/api-calls/categoryApiCalls";
 import { FaUtensils } from "react-icons/fa6";
 
 type Category = {
@@ -8,11 +9,8 @@ type Category = {
   }[];
 };
 const CategoryList = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/category`, {
-    cache: "no-store",
-  });
+  const { categories } = await getAllCategories();
 
-  const { categories } = await res.json();
   console.log(categories);
 
   if (categories.length === 0) {
