@@ -64,12 +64,14 @@ export default function HomeContent({ isAuth }: HomeContentProps) {
         />
       )}
 
-      <Link
-        href={"/login"}
-        className="text-[10px] text-amber-600 flex items-center justify-center max-sm:hidden my-3 "
-      >
-        ONLY FOR RESTAURANT STAFF
-      </Link>
+      {!isAuth && (
+        <Link
+          href={"/login"}
+          className="text-[10px] text-amber-600 flex items-center justify-center max-sm:hidden my-3 "
+        >
+          ONLY FOR RESTAURANT STAFF
+        </Link>
+      )}
     </div>
   );
 }

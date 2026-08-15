@@ -88,7 +88,6 @@ export async function PUT(
         price: data.price,
         image: data.image,
         categoryId: data.categoryId,
-        available: data.available,
       },
     });
 

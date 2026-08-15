@@ -5,7 +5,6 @@ export const menuItemSchema = z.object({
   price: z.number().positive("Price must be greater than 0"),
   image: z.string().url("invalid image URL"),
   categoryId: z.number().int().positive(),
-  available: z.boolean(),
 });
 
 export const updateMenuItemSchema = menuItemSchema.partial();

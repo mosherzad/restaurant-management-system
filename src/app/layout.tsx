@@ -4,6 +4,7 @@ import "./globals.css";
 import { Poppins } from "next/font/google";
 import Providers from "@/providers";
 import { ToastContainer } from "react-toastify";
+import SplashScreen from "@/components/SplashScreen";
 
 const rubik = Rubik({
   weight: ["400", "500", "600", "700"],
@@ -35,6 +36,7 @@ export default function RootLayout({
       <body className={`antialiased bg-[#221810] w-full font-poppins`}>
         <ToastContainer toastClassName="font-poppins font-bold" />
         <Providers>{children}</Providers>
+        <SplashScreen />
       </body>
     </html>
   );

@@ -36,6 +36,7 @@ const MealCard = ({ data, isLCP, isAuth }: MealProps) => {
           alt={data.name}
           preload={isLCP}
           fetchPriority={isLCP ? "high" : "auto"}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 463px"
           className="hover:scale-105 transition-all duration-300 rounded-t-lg object-cover"
         />
       </div>

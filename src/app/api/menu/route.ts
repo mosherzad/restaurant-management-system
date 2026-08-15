@@ -50,7 +50,6 @@ export async function POST(request: NextRequest) {
         price: data.price,
         image: data.image,
         categoryId: data.categoryId,
-        available: data.available,
       },
     });
 
