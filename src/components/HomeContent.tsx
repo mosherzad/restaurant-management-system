@@ -5,11 +5,14 @@ import MealCard from "@/components/MealCard";
 import MenuCategory from "@/components/MenuCategory";
 import Rightbar from "@/components/Rightbar";
 import Link from "next/link";
+import { jwtPayload } from "@/lib/types";
 
 interface Meal {
   id: number;
   name: string;
   description: string;
+  available: boolean;
+  categoryId: number;
   category: { id: number; name: string; createdAt: string };
   price: number;
   image: string;
@@ -17,9 +20,9 @@ interface Meal {
 }
 
 type HomeContentProps = {
-  isAuth: boolean;
+  payload: jwtPayload | null;
 };
-export default function HomeContent({ isAuth }: HomeContentProps) {
+export default function HomeContent({ payload }: HomeContentProps) {
   const [cartOpen, setCartOpen] = useState(false);
 
   const [menu, setMenu] = useState<Meal[]>([]);
@@ -45,7 +48,7 @@ export default function HomeContent({ isAuth }: HomeContentProps) {
   return (
     <div className="relative mx-auto min-h-[calc(100vh-4.5rem)] w-full min-w-0 max-w-6xl md:min-h-screen">
       <div className="sticky top-0 z-20 bg-[#221810]/95 py-2 backdrop-blur-sm md:static md:bg-transparent md:py-0 md:backdrop-blur-none">
-        <MenuCategory isAuth={isAuth} onOpenCart={() => setCartOpen(true)} />
+        <MenuCategory payload={payload} onOpenCart={() => setCartOpen(true)} />
       </div>
       <div className="no-scrollbar items-start grid h-[calc(100vh-8rem)] w-full min-w-0 max-w-225 grid-cols-[minmax(0,1fr)] justify-items-center gap-4 overflow-x-hidden overscroll-x-none p-2 [scrollbar-gutter:stable] sm:sm:grid-cols-2 sm:gap-6 sm:p-3 md:h-[calc(100vh-2.5rem)] md:gap-7 md:p-4 lg:grid-cols-3 lg:gap-9">
         {menu.map((meal, index) => (
@@ -53,18 +56,18 @@ export default function HomeContent({ isAuth }: HomeContentProps) {
             key={meal.id}
             data={meal}
             isLCP={index === 0}
-            isAuth={isAuth}
+            payload={payload}
           />
         ))}
       </div>
-      {isAuth && (
+      {payload && (
         <Rightbar
           mobileOpen={cartOpen}
           onMobileClose={() => setCartOpen(false)}
         />
       )}
 
-      {!isAuth && (
+      {!payload && (
         <Link
           href={"/login"}
           className="text-[10px] text-amber-600 flex items-center justify-center max-sm:hidden my-3 "

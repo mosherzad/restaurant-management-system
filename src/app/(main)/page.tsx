@@ -6,11 +6,10 @@ export default async function Home() {
   const cookieStore = await cookies();
   const token = cookieStore.get("jwtToken")?.value;
 
-  const isAuth = Boolean(token && verifyTokenFromToken(token));
-
+  const payload = token ? verifyTokenFromToken(token) : null;
   return (
     <div className="relative no-scrollbar w-full min-w-0 overflow-x-hidden lg:pr-98">
-      <HomeContent isAuth={isAuth} />
+      <HomeContent payload={payload} />
     </div>
   );
 }

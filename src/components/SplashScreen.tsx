@@ -1,6 +1,5 @@
 "use client";
 
-import { clear } from "console";
 import { useEffect, useState } from "react";
 import { MdFoodBank } from "react-icons/md";
 

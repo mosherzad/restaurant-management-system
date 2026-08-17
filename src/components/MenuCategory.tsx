@@ -1,11 +1,12 @@
+import { jwtPayload } from "@/lib/types";
 import { FaShoppingCart } from "react-icons/fa";
 
 type MenuCategoryProps = {
-  isAuth: boolean;
+  payload: jwtPayload | null;
   onOpenCart?: () => void;
 };
 
-const MenuCategory = ({ isAuth, onOpenCart }: MenuCategoryProps) => {
+const MenuCategory = ({ payload, onOpenCart }: MenuCategoryProps) => {
   return (
     <div className="flex items-center w-full bg-[#0F172A] overflow-hidden px-3 py-2 sm:gap-4 md:gap-5 md:px-4 ">
       <div className="no-scrollbar flex gap-2 overflow-x-auto  rounded-lg min-w-0 ">
@@ -49,7 +50,7 @@ const MenuCategory = ({ isAuth, onOpenCart }: MenuCategoryProps) => {
           <span>Appetizers</span>
         </div>
       </div>
-      {isAuth && (
+      {payload && (
         <button
           type="button"
           onClick={onOpenCart}

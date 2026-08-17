@@ -1,5 +1,6 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { NextRequest } from "next/server";
+import { jwtPayload } from "../types";
 
 export const verifyToken = (request: NextRequest) => {
   try {
@@ -26,7 +27,7 @@ export function verifyTokenFromToken(token: string) {
       return null;
     }
 
-    return decoded;
+    return decoded as jwtPayload;
   } catch {
     return null;
   }

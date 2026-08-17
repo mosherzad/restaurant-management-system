@@ -1,7 +1,9 @@
 import { FaUserCircle } from "react-icons/fa";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { verifyTokenFromToken } from "@/lib/jwt/verifyToken";
 
-export default function DashboardHeader() {
+export default async function DashboardHeader() {
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     day: "numeric",
@@ -9,6 +11,13 @@ export default function DashboardHeader() {
     year: "numeric",
   });
 
+  const cookieStore = await cookies();
+  const token = cookieStore.get("jwtToken")?.value;
+
+  if (!token) return null;
+  const payload = verifyTokenFromToken(token);
+
+  if (!payload) return null;
   return (
     <header className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between bg-[#0F172A] mb-3 p-5">
       <div>
@@ -28,7 +37,7 @@ export default function DashboardHeader() {
           <div>
             <h3 className="text-sm font-semibold text-white">Admin</h3>
 
-            <p className="text-xs text-slate-400">Restaurant Manager</p>
+            <p className="text-xs text-slate-400 capitalize">{payload.name}</p>
           </div>
         </div>
         <Link

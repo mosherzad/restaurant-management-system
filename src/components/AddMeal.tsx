@@ -55,7 +55,7 @@ const AddMeal = ({ categories }: AddMealProps) => {
     <section className="rounded-2xl border border-white/10 w-[50%] p-6">
       <h2 className=" text-md lg:text-xl font-semibold text-white">Add Meal</h2>
       <span className="mb-6 text-sm text-gray-400">Add new menu item</span>
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-3">
         <div className="mt-4">
           <label
             htmlFor="name"
@@ -90,17 +90,41 @@ const AddMeal = ({ categories }: AddMealProps) => {
           />
         </div>
 
+        <div>
+          <label
+            htmlFor="category"
+            id="category"
+            className="text-white font-semibold text-sm"
+          >
+            Category
+          </label>
+          <select
+            name="categoryId"
+            value={categoryId}
+            onChange={(e) => setCategoryId(Number(e.target.value))}
+            className="w-full rounded-xl border text-sm md:text-md border-white/10 bg-[#111827] p-3 text-white outline-none focus:border-orange-400"
+          >
+            <option value="">Select Category</option>
+
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="flex">
           <UploadDropzone
             endpoint="imageUploader"
             appearance={{
               container:
-                "w-full border border-white/10 bg-[#111827] rounded-xl py-2",
-              label: "text-gray-300",
-              uploadIcon: "h-8",
-              allowedContent: "text-gray-500",
+                "w-full h-28 border border-white/10 bg-[#111827] rounded-xl",
+              label: "text-gray-300 text-sm",
+              uploadIcon: "h-6 w-6",
+              allowedContent: "text-gray-500 text-xs",
               button:
-                "bg-orange-500 hover:bg-orange-600 text-white ut-readying:bg-orange-500 px-2 text-sm font-semibold",
+                "bg-orange-500 hover:bg-orange-600 text-white ut-readying:bg-orange-500 px-3 py-2 text-sm font-semibold",
             }}
             onClientUploadComplete={(res) => {
               setImage(res[0].url);
@@ -116,36 +140,12 @@ const AddMeal = ({ categories }: AddMealProps) => {
           <Image
             src={imageUrl}
             alt="Preview"
-            width={160}
-            height={160}
+            width={90}
+            height={90}
             className="rounded-lg object-cover"
           />
         )}
-
-        <div>
-          <label
-            htmlFor="category"
-            id="category"
-            className="text-white font-semibold text-sm"
-          >
-            Category
-          </label>
-          <select
-            name="categoryId"
-            value={categoryId}
-            onChange={(e) => setCategoryId(Number(e.target.value))}
-            className="w-full rounded-xl border border-white/10 bg-[#111827] p-3 text-white outline-none focus:border-orange-400"
-          >
-            <option value="">Select Category</option>
-
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button className="flex w-full items-center text-sm md:text-lg justify-center gap-2 rounded-xl bg-orange-500 py-3 font-semibold text-white transition hover:bg-orange-600">
+        <button className="flex w-full items-center text-sm md:text-lg justify-center gap-2 rounded-xl bg-orange-500 py-1 font-semibold text-white transition hover:bg-orange-600">
           <FaPlus />
           Add Meal
         </button>

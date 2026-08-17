@@ -1,4 +1,5 @@
 import { fetchDashboardData } from "@/api-calls/dashboardApiCalls";
+import { getUsers } from "@/api-calls/userApiServerCalls";
 import AddCategory from "@/components/AddCategory";
 import AddMeal from "@/components/AddMeal";
 import CategoryList from "@/components/CategoryList";
@@ -7,9 +8,14 @@ import { OrderOverview } from "@/components/OrderOverview";
 import RecentMeals from "@/components/RecentMeals";
 import RecentOrders from "@/components/RecentOrders";
 import StatusCard from "@/components/StatusCard";
+import UserTable from "@/components/UserTable";
 
 const Dashboard = async () => {
-  const statics = await fetchDashboardData();
+  const [statics, userData] = await Promise.all([
+    fetchDashboardData(),
+    getUsers(),
+  ]);
+  const { users } = userData;
 
   return (
     <div>
@@ -31,6 +37,7 @@ const Dashboard = async () => {
           <RecentMeals />
         </div>
       </div>
+      <UserTable users={users} />
     </div>
   );
 };
