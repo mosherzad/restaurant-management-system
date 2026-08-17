@@ -37,7 +37,9 @@ const Dashboard = async () => {
           <RecentMeals />
         </div>
       </div>
-      <UserTable users={users} />
+      <div className="my-5">
+        <UserTable users={users} />
+      </div>
     </div>
   );
 };

@@ -4,6 +4,8 @@ import { useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import ConfirmModal from "./ConfirmModalBox";
 import { deleteUserById } from "@/api-calls/userApiClientCalls";
+import UpdateUserForm from "./UpdateUserForm";
+import { useRouter } from "next/navigation";
 
 interface User {
   id: number;
@@ -19,8 +21,11 @@ interface UserTableProps {
 }
 
 const UserTable = ({ users }: UserTableProps) => {
+  const router = useRouter();
   const [isOpenConfirm, setIsOpenConfirm] = useState(false);
+  const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [selectedUserData, setSelectedUserData] = useState<User | null>(null);
   const handleDeleteUser = async (userId: number | null) => {
     try {
       if (userId === null) return null;
@@ -105,7 +110,10 @@ const UserTable = ({ users }: UserTableProps) => {
                 <td className="px-6 py-4">
                   <div className="flex justify-end gap-2">
                     <button
-                      //   onClick={() => onEdit(user)}
+                      onClick={() => {
+                        setIsOpenUpdate(true);
+                        setSelectedUserData(user);
+                      }}
                       className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-700 hover:text-white"
                       title="Edit"
                     >
@@ -140,6 +148,16 @@ const UserTable = ({ users }: UserTableProps) => {
             setSelectedUserId(null);
           }}
         />
+        {selectedUserData && (
+          <UpdateUserForm
+            data={selectedUserData}
+            isOpenModal={isOpenUpdate}
+            onClose={() => setIsOpenUpdate(false)}
+            onUpdated={() => {
+              router.refresh();
+            }}
+          />
+        )}
       </div>
 
       {users.length === 0 && (
