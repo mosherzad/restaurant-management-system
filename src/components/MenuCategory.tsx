@@ -4,51 +4,42 @@ import { FaShoppingCart } from "react-icons/fa";
 type MenuCategoryProps = {
   payload: jwtPayload | null;
   onOpenCart?: () => void;
+  selectedCategory: number | null;
+  onCategoryChange: (categoryId: number | null) => void;
+  categories: {
+    id: number;
+    name: string;
+    createdAt: string;
+  }[];
 };
 
-const MenuCategory = ({ payload, onOpenCart }: MenuCategoryProps) => {
+const MenuCategory = ({
+  payload,
+  onOpenCart,
+  selectedCategory,
+  categories,
+  onCategoryChange,
+}: MenuCategoryProps) => {
   return (
-    <div className="flex items-center w-full bg-[#0F172A] overflow-hidden px-3 py-2 sm:gap-4 md:gap-5 md:px-4 ">
-      <div className="no-scrollbar flex gap-2 overflow-x-auto  rounded-lg min-w-0 ">
-        <div className="flex shrink-0 cursor-pointer items-center space-x-1 rounded-full bg-[#1E293B] px-3 py-1.5 text-sm text-white transition-all duration-300 hover:bg-[#EC6D13] sm:text-base md:text-lg">
-          <span>All</span>
-        </div>
-        <div className="flex shrink-0 cursor-pointer items-center space-x-1 rounded-full bg-[#1E293B] px-3 py-1.5 text-sm text-white transition-all duration-300 hover:bg-[#EC6D13] sm:text-base md:text-lg">
-          <span>Pizza</span>
-        </div>
-        <div className="flex shrink-0 cursor-pointer items-center space-x-1 rounded-full bg-[#1E293B] px-3 py-1.5 text-sm text-white transition-all duration-300 hover:bg-[#EC6D13] sm:text-base md:text-lg">
-          <span>Burger</span>
-        </div>
-        <div className="flex shrink-0 cursor-pointer items-center space-x-1 rounded-full bg-[#1E293B] px-3 py-1.5 text-sm text-white transition-all duration-300 hover:bg-[#EC6D13] sm:text-base md:text-lg">
-          <span>Drink</span>
-        </div>
-        <div className="flex shrink-0 cursor-pointer items-center space-x-1 rounded-full bg-[#1E293B] px-3 py-1.5 text-sm text-white transition-all duration-300 hover:bg-[#EC6D13] sm:text-base md:text-lg">
-          <span>Appetizers</span>
-        </div>
-        <div className="flex shrink-0 cursor-pointer items-center space-x-1 rounded-full bg-[#1E293B] px-3 py-1.5 text-sm text-white transition-all duration-300 hover:bg-[#EC6D13] sm:text-base md:text-lg">
-          <span>Pizza</span>
-        </div>
-        <div className="flex shrink-0 cursor-pointer items-center space-x-1 rounded-full bg-[#1E293B] px-3 py-1.5 text-sm text-white transition-all duration-300 hover:bg-[#EC6D13] sm:text-base md:text-lg">
-          <span>Burger</span>
-        </div>
-        <div className="flex shrink-0 cursor-pointer items-center space-x-1 rounded-full bg-[#1E293B] px-3 py-1.5 text-sm text-white transition-all duration-300 hover:bg-[#EC6D13] sm:text-base md:text-lg">
-          <span>Drink</span>
-        </div>
-        <div className="flex shrink-0 cursor-pointer items-center space-x-1 rounded-full bg-[#1E293B] px-3 py-1.5 text-sm text-white transition-all duration-300 hover:bg-[#EC6D13] sm:text-base md:text-lg">
-          <span>Appetizers</span>
-        </div>
-        <div className="flex shrink-0 cursor-pointer items-center space-x-1 rounded-full bg-[#1E293B] px-3 py-1.5 text-sm text-white transition-all duration-300 hover:bg-[#EC6D13] sm:text-base md:text-lg">
-          <span>Pizza</span>
-        </div>
-        <div className="flex shrink-0 cursor-pointer items-center space-x-1 rounded-full bg-[#1E293B] px-3 py-1.5 text-sm text-white transition-all duration-300 hover:bg-[#EC6D13] sm:text-base md:text-lg">
-          <span>Burger</span>
-        </div>
-        <div className="flex shrink-0 cursor-pointer items-center space-x-1 rounded-full bg-[#1E293B] px-3 py-1.5 text-sm text-white transition-all duration-300 hover:bg-[#EC6D13] sm:text-base md:text-lg">
-          <span>Drink</span>
-        </div>
-        <div className="flex shrink-0 cursor-pointer items-center space-x-1 rounded-full bg-[#1E293B] px-3 py-1.5 text-sm text-white transition-all duration-300 hover:bg-[#EC6D13] sm:text-base md:text-lg">
-          <span>Appetizers</span>
-        </div>
+    <div className="flex items-center justify-between w-full  overflow-hidden px-3 py-2 sm:gap-4 md:gap-5 md:px-4 ">
+      <div className="no-scrollbar flex gap-2 overflow-x-auto justify-center rounded-lg w-full ">
+        <button
+          type="button"
+          onClick={() => onCategoryChange(null)}
+          className={`shrink-0 rounded-full font-semibold transition-all duration-200 bg-[#0F172A] px-3 py-1.5 text-sm text-white hover:bg-[#EC6D13] ${selectedCategory === null ? "bg-[#EC6D13]" : "bg-[#1E293B]"}`}
+        >
+          All
+        </button>
+        {categories.map((category) => (
+          <button
+            key={category.id}
+            type="button"
+            onClick={() => onCategoryChange(category.id)}
+            className={`shrink-0 rounded-full capitalize font-semibold transition-all duration-200 bg-[#0F172A] px-3 py-1.5 text-sm text-white hover:bg-[#EC6D13] ${category.id === selectedCategory ? "bg-[#EC6D13]" : "bg-[#1E293B] hover:bg-[#EC6D13]"}`}
+          >
+            {category.name}
+          </button>
+        ))}
       </div>
       {payload && (
         <button

@@ -66,7 +66,7 @@ const MealCard = ({ data, isLCP, payload }: MealProps) => {
         />
       </div>
       <div className="min-w-0 p-2">
-        <p className="mt-1 wrap-break-word text-[18px] font-semibold text-white">
+        <p className="mt-1 wrap-break-word text-[18px] font-semibold text-white line-clamp-1">
           {data.name}
         </p>
         <div className="flex items-center justify-between gap-2">
@@ -90,7 +90,7 @@ const MealCard = ({ data, isLCP, payload }: MealProps) => {
           </div>
         )}
 
-        {payload!.role === "ADMIN" && (
+        {payload?.role === "ADMIN" && (
           <div>
             <div className="flex justify-start text-[#EC6D13]">
               <MdEdit

@@ -145,18 +145,6 @@ const LoginForm = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <input
-                id="remember"
-                type="checkbox"
-                className="h-4 w-4 rounded border-white/20 bg-white/5 accent-amber-500"
-              />
-
-              <label htmlFor="remember" className="text-sm text-white/50">
-                Remember me
-              </label>
-            </div>
-
             <button
               type="submit"
               className="group relative h-12 w-full overflow-hidden rounded-xl bg-[#EC6D13] font-semibold text-black transition hover:bg-amber-400"

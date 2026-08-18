@@ -25,7 +25,7 @@ const SplashScreen = () => {
   if (!showSplash) return null;
 
   return (
-    <main className="fixed inset-0 z-50 flex min-h-screen items-center justify-center overflow-hidden bg-[#161616]">
+    <main className="fixed inset-0 z-50 flex h-screen items-center justify-center overflow-hidden bg-[#161616]">
       <div className="text-center">
         <div className="mb-5 flex items-center justify-center space-x-2 text-4xl font-bold text-white sm:text-5xl">
           <MdFoodBank className="text-[#EC6D13]" size={58} />

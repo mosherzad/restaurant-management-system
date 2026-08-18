@@ -127,7 +127,7 @@ const AddMeal = ({ categories }: AddMealProps) => {
                 "bg-orange-500 hover:bg-orange-600 text-white ut-readying:bg-orange-500 px-3 py-2 text-sm font-semibold",
             }}
             onClientUploadComplete={(res) => {
-              setImage(res[0].url);
+              setImage(res[0].ufsUrl);
               toast.success("Image uploaded");
             }}
             onUploadError={(error) => {

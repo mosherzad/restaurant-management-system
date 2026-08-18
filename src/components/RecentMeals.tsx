@@ -15,7 +15,7 @@ type Meal = {
 const RecentMeals = async () => {
   const { menuItems } = await getAllMeals();
 
-  const latestMeal = menuItems?.slice(0, 7);
+  const latestMeal = menuItems?.slice(0, 5);
   return (
     <section className="rounded-2xl p-6 w-[50%]">
       <div className="mb-6 flex items-center justify-between">

@@ -5,6 +5,7 @@ import { MdDashboard, MdFastfood, MdFoodBank } from "react-icons/md";
 import { usePathname } from "next/navigation";
 import { FaBasketShopping, FaKitchenSet } from "react-icons/fa6";
 import LogoutBtn from "./LogoutBtn";
+import { jwtPayload } from "@/lib/types";
 
 type LinkItem = {
   label: string;
@@ -12,7 +13,11 @@ type LinkItem = {
   icon: IconType;
 };
 
-const SidebarLinks = () => {
+interface SidebarLinksProps {
+  payload: jwtPayload | null;
+}
+
+const SidebarLinks = ({ payload }: SidebarLinksProps) => {
   const pathname = usePathname();
   const navLinks: LinkItem[] = [
     {
@@ -29,11 +34,6 @@ const SidebarLinks = () => {
       path: "/kitchen",
       label: "kitchen",
       icon: FaKitchenSet,
-    },
-    {
-      path: "/dashboard",
-      label: "dashboard",
-      icon: MdDashboard,
     },
   ];
   return (
@@ -64,7 +64,19 @@ const SidebarLinks = () => {
             </Link>
           );
         })}
-
+        {payload?.role === "ADMIN" && (
+          <Link
+            href={"/dashboard"}
+            className={`flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg border-none px-2 py-2 text-[11px] font-bold text-white outline-none transition-all duration-300 hover:bg-[#EC6D13] sm:text-xs md:flex-initial md:flex-row md:gap-0 md:space-x-2 md:px-3 md:text-base ${
+              pathname === "/dashboard" ? "bg-[#EC6D13] text-white" : ""
+            }`}
+          >
+            <MdDashboard className="h-5 w-5 shrink-0 md:h-5 md:w-5" />
+            <span className="max-w-18 truncate capitalize md:max-w-none">
+              Dashboard
+            </span>
+          </Link>
+        )}
         <LogoutBtn />
       </nav>
     </>

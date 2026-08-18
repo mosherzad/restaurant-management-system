@@ -35,15 +35,19 @@ const Kitchen = () => {
           `${process.env.NEXT_PUBLIC_API_URL}/order`,
         );
 
+        const data = await response.json();
+
         if (!response.ok) {
-          throw new Error("Failed to fetch orders");
+          throw new Error(data.message || "Failed to fetch orders");
         }
 
-        const data = await response.json();
         setOrders(data.orders);
         console.log(data.orders);
       } catch (error) {
         console.error(error);
+        toast.error(
+          error instanceof Error ? error.message : "Failed to fetch orders",
+        );
       }
     };
 
@@ -66,7 +70,8 @@ const Kitchen = () => {
         },
       );
 
-      if (!res.ok) throw new Error("failed to fetch data");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "failed to fetch data");
 
       setOrders((prev) =>
         prev.map((order) =>
@@ -76,7 +81,11 @@ const Kitchen = () => {
       toast.success("Order status updated");
     } catch (error) {
       console.error(error);
-      toast.error("Failed to update order status");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to update order status",
+      );
     }
   };
   const cardStyle =

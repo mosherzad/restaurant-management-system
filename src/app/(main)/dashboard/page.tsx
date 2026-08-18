@@ -22,7 +22,7 @@ const Dashboard = async () => {
       <DashboardHeader />
       <StatusCard statics={statics} />
       <div className="flex flex-col lg:flex-row  gap-5 mt-3">
-        <OrderOverview />
+        <OrderOverview statics={statics} />
         <RecentOrders />
       </div>
 
