@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MealCard from "@/components/MealCard";
 import MenuCategory from "@/components/MenuCategory";
 import Rightbar from "@/components/Rightbar";
@@ -21,38 +21,23 @@ interface Meal {
 
 type HomeContentProps = {
   payload: jwtPayload | null;
+  menuItems: Meal[];
 };
-export default function HomeContent({ payload }: HomeContentProps) {
+export default function HomeContent({ menuItems, payload }: HomeContentProps) {
   const [cartOpen, setCartOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [menu, setMenu] = useState<Meal[]>([]);
-
-  useEffect(() => {
-    const fetchMeals = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/menu`);
-
-        if (!res.ok) throw new Error("failed to fetch menu");
-
-        const { menuItems } = await res.json();
-
-        setMenu(menuItems);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchMeals();
-  }, []);
 
   const filteredMenu =
     selectedCategory === null
-      ? menu
-      : menu.filter((meal) => meal.categoryId === selectedCategory);
+      ? menuItems
+      : menuItems.filter((meal) => meal.categoryId === selectedCategory);
 
   const categories = Array.from(
-    new Map(menu.map((meal) => [meal.category.id, meal.category])).values(),
+    new Map(
+      menuItems.map((meal) => [meal.category.id, meal.category]),
+    ).values(),
   );
+
   return (
     <div className="relative mx-auto h-[calc(100vh-5.5rem)] w-full min-w-0 max-w-6xl">
       <div className="sticky top-0 z-20 bg-[#221810]/95 py-2 backdrop-blur-sm md:bg-transparent md:py-0 md:backdrop-blur-none">

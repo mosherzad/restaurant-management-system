@@ -41,7 +41,7 @@ export default async function DashboardHeader() {
           </div>
         </div>
         <Link
-          href={""}
+          href={"/dashboard/add-user"}
           className="text-white bg-[#EC6D13] rounded-xl px-3 py-1 font-semibold"
         >
           Add user

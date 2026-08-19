@@ -10,11 +10,11 @@ const SplashScreen = () => {
   useEffect(() => {
     const timerSplash = setTimeout(() => {
       setShowSplash(false);
-    }, 2000);
+    }, 1000);
 
     const timerText = setTimeout(() => {
       setText("FAIRLY SERVED");
-    }, 1000);
+    }, 500);
 
     return () => {
       clearTimeout(timerText);

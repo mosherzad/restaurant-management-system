@@ -104,16 +104,20 @@ const MealCard = ({ data, isLCP, payload }: MealProps) => {
                 className="hover:bg-[#EC6D13] hover:text-white duration-350 transition-all rounded"
               />
             </div>
-            <UpdateMenuForm
-              isOpenModal={isOpenModal}
-              data={data}
-              onClose={() => setIsOpenModal(false)}
-            />
-            <ConfirmModal
-              isOpenConfirm={isOpenConfirm}
-              onConfirm={() => handleDeleteItem(data.id)}
-              onCancel={() => setIsOpenConfirm(false)}
-            />
+            {isOpenModal && (
+              <UpdateMenuForm
+                isOpenModal={isOpenModal}
+                data={data}
+                onClose={() => setIsOpenModal(false)}
+              />
+            )}
+            {isOpenConfirm && (
+              <ConfirmModal
+                isOpenConfirm={isOpenConfirm}
+                onConfirm={() => handleDeleteItem(data.id)}
+                onCancel={() => setIsOpenConfirm(false)}
+              />
+            )}
           </div>
         )}
       </div>

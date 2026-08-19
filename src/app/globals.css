@@ -1,20 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");
 @import "tailwindcss";
 @source "../**/*.{js,ts,jsx,tsx,mdx}";
 
 @theme inline {
   --font-poppins: "Poppins", sans-serif;
-  --font-rubik: "Rubik", sans-serif;
 }
 @layer utilities {
   .font-poppins {
     font-family: var(--font-poppins);
-  }
-  .font-nunito {
-    font-family: var(--font-nunito);
-  }
-  .font-rubik {
-    font-family: var(--font-rubik);
   }
 }
 .no-scrollbar::-webkit-scrollbar {
